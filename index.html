@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Ooyala jquery</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+        <script src="scripts/jquery.ooyala.js"></script>
+        <script src="scripts/videoListPlugin.js"></script>
+        <link type="text/css" rel="stylesheet" href="styles/style.css">
+        
+        <style type="text/css">
+            #video{
+                max-width: 1280px;
+                max-height: 760px;
+                min-width: 320px;
+                width: 100%;
+                height: 0;
+                margin-left: auto;
+                margin-right: auto;
+                padding-bottom: 59.375%;
+                position: relative;
+            }
+            #playerwrapper {
+              width: 100%;
+              height: 100%;
+              position: absolute;
+              min-width: 320px;
+              max-width: 1280px;
+            }
+            
+            html,body{
+                padding: 0;
+                margin: 0;
+            }
+            @media screen and (min-width : 1280px){
+                #video{
+                    padding-bottom: 0%;
+                    height: 760px;
+                }
+            }
+          </style>
+    </head>
+    <body>
+        <div id="video">
+            <div id="playerwrapper"></div>
+        </div>
+        <script>
+            $('document').ready(function(){
+                
+                (function() {
+
+                   var videoList = new window.globals.videoList(); 
+                   $("#playerwrapper").ooyala({
+                     playerId: "3c629ba36aa54e68885bc7b9f73c5a17",
+                     contentId: "Zybjh4bTrbDDeCvaRb61Ugi1G5Fg1tNO",
+                     favorHtml5: false,
+                     feedUrl: "http://cdn-api.ooyala.com/syndication/source?k=0G5eWm0Plx",
+                     facebookAppId: '1444603709111263',
+                     playerParams: {
+                       flashParams: { 
+                         hide: 'embed,info,sharing',
+                         devModuleCategory : 'other',
+                         devModuleURL : 'http://corebox.cloudapp.net:81/ooyala-jquery/Refinery29PartialCustomPlayer v1.0.3.swf'
+                       },
+                       autoplay: false,
+                       wmode: 'transparent'
+                     },
+                     playerPlacement: window.globals.videoListSettings.playerPlacement
+                   })
+                   .on( "ooyala.ready", function( evt, player, OO ) {
+                       var globalObject = $(this).data('ooyala');
+                       videoList.player = player;
+                       videoList.global = globalObject; 
+
+                       $.when(videoList.getVideoList())
+                       .done(function(data){
+                         videoList.parseVideoList(data);
+                       })
+                       .fail(function(){
+                         videoList.throwVideoListError();  
+                       });
+                   })
+                   .on('ooyala.event.CONTENT_TREE_FETCHED', function(e,c){
+                       videoList.eventHooks['CONTENT_TREE_FETCHED'].call(videoList,e,c);
+                   })
+                   .on('ooyala.event.PLAYER_CREATED', function(e,ei){
+                       videoList.eventHooks['PLAYER_CREATED'].call(videoList,e,ei);
+                   })
+                   .on('ooyala.event.PLAYHEAD_TIME_CHANGED', function(e,t){
+                       videoList.eventHooks['PLAYHEAD_TIME_CHANGED'].call(videoList,e,t);
+                   })
+                   .on('ooyala.event.PLAYED', function(e,ei){
+                       videoList.eventHooks['PLAYED'].call(videoList,e,ei);
+                   });
+
+                 })();
+            });
+        </script>
+    </body>
+</html>
