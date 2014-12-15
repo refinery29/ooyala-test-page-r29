@@ -7,7 +7,7 @@
         new _updateDOM(this,v)
       },
       defaultDomain: window.location.protocol + '//' + window.location.host + '/static/assets',
-      videoListFetchedError: "Can't find feed",
+      videoListFetchedError: "Cant find feed",
       nextVideoInterval: 5,
       shareButtonDelay: 2500,
       shareScreenOnPauseDelay : 200
